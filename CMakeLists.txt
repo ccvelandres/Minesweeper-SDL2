@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.15)
 project(Minesweeper VERSION 0.1.0)
 
 find_package(SDL2 REQUIRED)
-
-# add_executable(sdl2_demo src/main.cpp)
+find_package(OpenGL REQUIRED)
+find_package(Threads REQUIRED)
 
 set(CMAKE_C_STANDARD 11) # Requires C11 standard
 set(CMAKE_CXX_STANDARD 20) # Requires C++20 standard
@@ -15,9 +15,15 @@ message("SRC_CPP_CORE: ${SRC_CPP_CORE}")
 
 add_executable(${PROJECT_NAME} ${SRC_C_CORE} ${SRC_CPP_CORE})
 
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/inc)
+
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2)
-# target_link_libraries(Vivaria PRIVATE SDL2::SDL2)
-# target_link_libraries(sdl2_demo SDL2main SDL2 GL)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2main)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2_image)
+target_link_libraries(${PROJECT_NAME} PRIVATE OpenGL)
+target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
+
 
 # Checks if OSX and links appropriate frameworks (only required on MacOS)
 # if (APPLE)

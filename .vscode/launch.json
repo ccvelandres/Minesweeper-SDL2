@@ -6,12 +6,12 @@
     "configurations": [
         {
             "name": "(gdb) Launch",
-            "type": "cppdbg",
+            "type": "lldb",
             "request": "launch",
             "program": "${workspaceFolder}/build/${workspaceFolderBasename}",
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build",
-            "preLaunchTask": "CMake Build : Release",
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "CMake Build : Debug",
             "externalConsole": false,
         }
     ]

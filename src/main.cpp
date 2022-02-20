@@ -2,42 +2,52 @@
 #include <SDL2/SDL_opengl.h>
 #include <stdio.h>
 
+#include <iostream>
+#include <game.hpp>
+#include <textures.hpp>
+
+Game *game = nullptr;
+
+uint32_t computeFPS(uint32_t frameStart, uint32_t frameTime) {
+	uint32_t delta = frameStart - frameTime;
+	return 1;
+}
 
 int main(int argc, char** args)
 {
-    //Initialize all the systems of SDL
-    SDL_Init(SDL_INIT_EVERYTHING);
+	uint32_t frameStart = 0;
+	uint32_t frameEnd = 0;
+	uint32_t frameTime = 0;
+	uint32_t frameDelta = 0;
+	uint32_t targetFPS = 60;
+	uint32_t targetDelta = 1000 / targetFPS;
+	uint32_t fps;
 
-    //Create a window with a title, "Getting Started", in the centre
-    //(or undefined x and y positions), with dimensions of 800 px width
-    //and 600 px height and force it to be shown on screen
-    SDL_Window* window = SDL_CreateWindow("Getting Started", SDL_WINDOWPOS_UNDEFINED,
-        SDL_WINDOWPOS_UNDEFINED, 800, 600, SDL_WINDOW_SHOWN);
+	TextureManager::setAssetPath("assets");
 
-    //Create a renderer for the window created above, with the first display driver present
-    //and with no additional settings
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
+	game = new Game();
 
-    //Set the draw color of renderer to green
-    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+	game->init("Minesweeper", 0, 0, 1024, 800, false);
 
-    //Clear the renderer with the draw color
-    SDL_RenderClear(renderer);
+	printf("TargetDelta: %10d\n", targetDelta);
 
-    //Update the renderer which will show the renderer cleared by the draw color which is green
-    SDL_RenderPresent(renderer);
+	while(game->running()) {
+		frameStart = SDL_GetTicks();
+		frameDelta = frameStart - frameEnd;
 
-    //Pause for 3 seconds (or 3000 milliseconds)
-    SDL_Delay(3000);
-    
-    //Destroy the renderer created above
-    SDL_DestroyRenderer(renderer);
+		game->handleEvents();
+		game->update(frameDelta);
+		game->render();
 
-    //Destroy the window created above
-    SDL_DestroyWindow(window);
+		frameEnd = SDL_GetTicks();
+		frameTime = frameEnd - frameStart;
+		if (targetDelta > frameTime) {
+			SDL_Delay(targetDelta - frameTime);
+		}
+		fps = 1000 / (SDL_GetTicks() - frameStart);
+	}
 
-    //Close all the systems of SDL initialized at the top
-    SDL_Quit();
+	game->clean();
 
     return 0;
 }
